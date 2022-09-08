@@ -70,10 +70,16 @@ let FlexberryButtonComponent = Ember.Component.extend(
       @private
     */
     _hasCaption: Ember.computed('caption', function () {
-      let caption = this.get('caption');
-      return Ember.typeOf(caption) === 'string' && Ember.$.trim(caption) !== '' ||
-        Ember.typeOf(Ember.String.isHTMLSafe) === 'function' && Ember.String.isHTMLSafe(caption) && Ember.$.trim(Ember.get(caption, 'string')) !== '' ||
-        caption instanceof Ember.Handlebars.SafeString && Ember.$.trim(Ember.get(caption, 'string')) !== '';
+      const caption = this.get('caption');
+      const isCaptionTypeIsString = Ember.typeOf(caption) === 'string';
+      const isCaptionNotEmpty = Ember.$.trim(caption) !== '';
+      const isCaptionSafe = Ember.String.isHTMLSafe(caption);
+      const isHTMLSafeDefined = Ember.typeOf(Ember.String.isHTMLSafe) === 'function';
+      const isStringOfCaptionEmpty = Ember.$.trim(Ember.get(caption, 'string')) === '';
+      
+      return isCaptionTypeIsString && isCaptionNotEmpty
+        || isHTMLSafeDefined && isCaptionSafe && isStringOfCaptionEmpty === false
+        || caption instanceof Ember.Handlebars.SafeString && isStringOfCaptionEmpty === false;
     }),
 
     /**
